@@ -1,5 +1,5 @@
 import Article from "../models/article.model.js";
-import { articlePopulationHelper } from "../utils/articlePopulation.helper.js";
+import { articlePopulation } from "../utils/articlePopulation.helper.js";
 
 const ArticleService = {
   create: async ({ data }) => {
@@ -47,7 +47,7 @@ const ArticleService = {
 
   getArticle: async ({ id }) => {
     const article = await Article.findById(id)
-      .populate(articlePopulationHelper)
+      .populate(articlePopulation)
       .lean();
 
     return article;
@@ -55,7 +55,7 @@ const ArticleService = {
 
   getLastArticles: async ({limit}) => {
     const articles = await Article.find()
-      .populate(articlePopulationHelper)
+      .populate(articlePopulation)
       .sort("-createdAt")
       .limit(limit ? limit : 10)
       .lean();
