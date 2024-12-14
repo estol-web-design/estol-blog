@@ -4,7 +4,10 @@ import ArticleService from "./article.service.js";
 const CommentService = {
   create: async ({ data }) => {
     const newComment = await Comment.create(data);
-    await ArticleService.addCommentToArticle({ id: data.article, comment: newComment._id });
+    await ArticleService.addCommentToArticle({
+      id: data.article,
+      comment: newComment._id,
+    });
 
     return newComment;
   },
@@ -17,7 +20,7 @@ const CommentService = {
     return comment;
   },
 
-  update: async ({ content }) => {
+  update: async ({ id, content }) => {
     const comment = await Comment.findById(id);
     comment.content = content;
     comment.save();
