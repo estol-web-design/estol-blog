@@ -4,6 +4,7 @@ import { marked } from "marked";
 const { ObjectId } = Schema.Types;
 
 const turndownService = new TurndownService();
+marked.setOptions({ breaks: true, gfm: true });
 
 const ArticleSchema = new Schema(
   {
@@ -11,6 +12,7 @@ const ArticleSchema = new Schema(
       type: ObjectId,
       ref: "User",
       required: [true, "Article's author is required"],
+      maxlength: [150, "Title cannot exceed 150 characters"],
     },
     title: {
       type: String,
@@ -18,6 +20,12 @@ const ArticleSchema = new Schema(
     },
     mainImg: {
       type: String,
+      validate: {
+        validator: function (v) {
+          return /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)$/i.test(v);
+        },
+        message: "Invalid image URL",
+      },
     },
     content: {
       type: String,
@@ -37,7 +45,7 @@ const ArticleSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    softDelete: {
+    isDeleted: {
       type: Boolean,
       default: false,
     },
@@ -46,16 +54,28 @@ const ArticleSchema = new Schema(
 );
 
 ArticleSchema.pre("save", function (next) {
-  this.content = turndownService.turndown(this.content);
+  if (this.isModified("content") && this.content) {
+    this.content = turndownService.turndown(this.content);
+  }
   next();
 });
 
 ArticleSchema.methods.toMarkdown = function () {
-  return turndownService.turndown(this.content);
-}
+  try {
+    return turndownService.turndown(this.content);
+  } catch (err) {
+    console.error("Html to markdown convertion error:", err);
+    return null;
+  }
+};
 
 ArticleSchema.methods.toHtml = function () {
-  return marked(this.content);
+  try {
+    return marked(this.content);
+  } catch (err) {
+    console.error("Markdown to html convertion error:", err);
+    return null;
+  }
 };
 
 const Article = model("Article", ArticleSchema);
