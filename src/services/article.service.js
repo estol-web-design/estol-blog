@@ -47,19 +47,15 @@ const ArticleService = {
 
   getArticle: async ({ id }) => {
     const article = await Article.findById(id).populate(articlePopulation);
-    const plainArticle = article.toObject();
 
-    plainArticle.content = article.toHtml();
-
-    return plainArticle;
+    return article;
   },
 
   getLastArticles: async ({ limit }) => {
     const articles = await Article.find({ published: true })
-      .populate(articlePopulation)
-      .sort("-createdAt")
-      .limit(limit ? limit : 10)
-      .lean({ virtuals: true });
+    .populate(articlePopulation)
+    .sort("-createdAt")
+    .limit(limit ? limit : 10)
 
     return articles;
   },

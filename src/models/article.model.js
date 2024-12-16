@@ -93,6 +93,19 @@ ArticleSchema.virtual("htmlContent").get(function () {
   }
 });
 
+ArticleSchema.set("toObject", { virtuals: true, transform: (doc, ret) => {
+  delete ret.content;
+  delete ret.id;
+  return ret;
+},
+});
+
+ArticleSchema.set("toJSON", { virtuals: true, transform: (doc, ret) => {
+  delete ret.content;
+  delete ret.id;
+  return ret;
+}, });
+
 const Article = model("Article", ArticleSchema);
 
 export default Article;
