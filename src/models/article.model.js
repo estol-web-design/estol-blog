@@ -84,6 +84,15 @@ ArticleSchema.methods.toHtml = function () {
   }
 };
 
+ArticleSchema.virtual("htmlContent").get(function () {
+  try {
+    return marked(this.content);
+  } catch (err) {
+    console.error("Error converting content to HTML:", err);
+    return null;
+  }
+});
+
 const Article = model("Article", ArticleSchema);
 
 export default Article;

@@ -55,11 +55,11 @@ const ArticleService = {
   },
 
   getLastArticles: async ({ limit }) => {
-    const articles = await Article.find()
+    const articles = await Article.find({ published: true }, { content: 0 })
       .populate(articlePopulation)
       .sort("-createdAt")
       .limit(limit ? limit : 10)
-      .lean();
+      .lean({ virtuals: true });
 
     return articles;
   },
