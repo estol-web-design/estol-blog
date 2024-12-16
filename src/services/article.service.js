@@ -1,5 +1,5 @@
 import Article from "../models/article.model.js";
-import { articlePopulation } from "../utils/articlePopulation.helper.js";
+import { articlePopulation } from "../utils/articlePopulation.util.js";
 
 const ArticleService = {
   create: async ({ data }) => {

@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { convertToHtml, convertToMarkdown } from "../utils/contentConvertion.helper";
+import { convertToHtml, convertToMarkdown } from "../utils/contentConvertion.util.js";
 const { ObjectId } = Schema.Types;
 
 const ArticleSchema = new Schema(
