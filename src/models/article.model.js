@@ -1,10 +1,6 @@
 import { Schema, model } from "mongoose";
-import TurndownService from "turndown";
-import { marked } from "marked";
+import { convertToHtml, convertToMarkdown } from "../utils/contentConvertion.helper";
 const { ObjectId } = Schema.Types;
-
-const turndownService = new TurndownService();
-marked.setOptions({ breaks: true, gfm: true });
 
 const ArticleSchema = new Schema(
   {
@@ -61,32 +57,23 @@ const ArticleSchema = new Schema(
 
 ArticleSchema.pre("save", function (next) {
   if (this.isModified("content") && this.content) {
-    this.content = turndownService.turndown(this.content);
+    this.content = convertToMarkdown(this.content);
   }
   next();
 });
 
 ArticleSchema.methods.toMarkdown = function () {
   try {
-    return turndownService.turndown(this.content);
+    return convertToMarkdown(this.content)
   } catch (err) {
     console.error("Html to markdown convertion error:", err);
     return null;
   }
 };
 
-ArticleSchema.methods.toHtml = function () {
-  try {
-    return marked(this.content);
-  } catch (err) {
-    console.error("Markdown to html convertion error:", err);
-    return null;
-  }
-};
-
 ArticleSchema.virtual("htmlContent").get(function () {
   try {
-    return marked(this.content);
+    return convertToHtml(this.content)
   } catch (err) {
     console.error("Error converting content to HTML:", err);
     return null;
