@@ -55,7 +55,7 @@ const ArticleService = {
   },
 
   getLastArticles: async ({ limit }) => {
-    const articles = await Article.find({ published: true }, { content: 0 })
+    const articles = await Article.find({ published: true })
       .populate(articlePopulation)
       .sort("-createdAt")
       .limit(limit ? limit : 10)
