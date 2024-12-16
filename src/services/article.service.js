@@ -46,14 +46,15 @@ const ArticleService = {
   },
 
   getArticle: async ({ id }) => {
-    const article = await Article.findById(id)
-      .populate(articlePopulation)
-      .lean();
+    const article = await Article.findById(id).populate(articlePopulation);
+    const plainArticle = article.toObject();
 
-    return article;
+    plainArticle.content = article.toHtml();
+
+    return plainArticle;
   },
 
-  getLastArticles: async ({limit}) => {
+  getLastArticles: async ({ limit }) => {
     const articles = await Article.find()
       .populate(articlePopulation)
       .sort("-createdAt")
