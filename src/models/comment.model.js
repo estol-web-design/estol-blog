@@ -27,16 +27,10 @@ const CommentSchema = new Schema(
       ref: "Article",
       required: [true, "Comment must belong to an article"],
     },
-    deleted: {
+    isDeleted: {
       type: Boolean,
       default: false,
     },
-    comments: [
-      {
-        type: ObjectId,
-        ref: "Comments",
-      },
-    ],
   },
   { timestamps: true }
 );

@@ -14,7 +14,7 @@ const CommentService = {
 
   delete: async ({ id }) => {
     const comment = await Comment.findById(id);
-    comment.deleted = true;
+    comment.isDeleted = true;
     comment.save();
 
     return comment;
@@ -32,6 +32,12 @@ const CommentService = {
     const comments = await Comment.find({ article });
 
     return comments;
+  },
+
+  deleteArticleComments: async ({ article }) => {
+    const comments = await Comment.deleteMany({ article });
+
+    return true
   },
 };
 

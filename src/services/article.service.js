@@ -1,5 +1,6 @@
 import Article from "../models/article.model.js";
 import { articlePopulation } from "../utils/articlePopulation.util.js";
+import CommentService from "./comment.service.js";
 
 const ArticleService = {
   create: async ({ data }) => {
@@ -10,15 +11,19 @@ const ArticleService = {
   },
 
   softDelete: async ({ id }) => {
-    const softDeletedArticle = await Article.findById(id);
-    softDeletedArticle.softDelete = true;
-    await softDeletedArticle.save();
+    const article = await Article.findById(id);
+    article.isDeleted = !article.isDeleted;
+    await article.save();
 
-    return softDeletedArticle;
+    return article;
   },
 
   hardDelete: async ({ id }) => {
     const hardDeletedArticle = await Article.findByIdAndDelete(id);
+
+    await CommentService.deleteArticleComments({
+      article: hardDeletedArticle._id,
+    });
 
     return hardDeletedArticle;
   },
@@ -53,9 +58,9 @@ const ArticleService = {
 
   getLastArticles: async ({ limit }) => {
     const articles = await Article.find({ published: true })
-    .populate(articlePopulation)
-    .sort("-createdAt")
-    .limit(limit ? limit : 10)
+      .populate(articlePopulation)
+      .sort("-createdAt")
+      .limit(limit ? limit : 10);
 
     return articles;
   },
